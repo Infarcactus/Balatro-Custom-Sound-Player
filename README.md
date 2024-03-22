@@ -1,5 +1,5 @@
 # Balatro-Custom-Sound-Player
-Allows you to play custom sounds
+Allows you to play custom sounds (files must be located in an Asset folder near your mod)
 
 The sound_code is the name of the file you wanna play without the extension
 
