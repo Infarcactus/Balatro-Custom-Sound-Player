@@ -8,7 +8,6 @@
 
 function SMODS.INIT.jojo()
     Add_Custom_Sound_Global("jojo_tarot")
-    Add_Custom_Stop_Sound_to_table("UwU")
 end
 
 local Orginial_Card_use_consumeable = Card.use_consumeable
