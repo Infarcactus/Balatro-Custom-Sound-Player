@@ -34,4 +34,4 @@ Arguments :
     Plus continue_base_sound that can be set to true to still play the base sound_code
 
 ## play_sound
-Modified play_sound is from the base game, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
+play_sound is from the base game, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
