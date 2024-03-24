@@ -14,7 +14,7 @@ function Add_Custom_Sound_Global(modID)
         if extension == '.ogg' or extension == '.mp3' then --please use .ogg files
             local sound = nil
             local sound_code = string.sub(filename, 1, -5)
-            sendDebugMessage("path: " .. mod.path .. 'Assets/' .. filename)
+            --sendDebugMessage("path: " .. mod.path .. 'Assets/' .. filename)
             sound = {sound = love.audio.newSource(mod.path .. 'Assets/' .. filename, 'static')}
             sound.sound_code = sound_code
             table.insert(Custom_Sounds,sound)
@@ -45,6 +45,29 @@ function Custom_Play_Sound(sound_code,stop_previous_instance, volume, pitch)
         end
     end
     return false
+end
+
+local Custom_Stop_Sound = {}
+
+function Add_Custom_Stop_Sound(sound_code)
+    if type(sound_code)=="table" then
+        for _,s_c in ipairs(sound_code) do
+            table.insert(Custom_Stop_Sound,s_c)
+        end
+    else
+        table.insert(Custom_Stop_Sound,sound_code)
+    end
+end
+
+local Original_play_sound = play_sound
+function play_sound(sound_code, per, vol)
+    for _, stopped_sound in ipairs(Custom_Stop_Sound) do
+        if stopped_sound == sound_code then
+            return
+        end
+    end
+    --sendDebugMessage("sound_code : " .. sound_code)
+    return Original_play_sound(sound_code, per, vol)
 end
 ----------------------------------------------
 ------------MOD CODE END----------------------
