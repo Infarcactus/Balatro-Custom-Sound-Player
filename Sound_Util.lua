@@ -11,7 +11,7 @@ function Add_Custom_Sound_Global(modID)
     local mod = SMODS.findModByID(modID)
     for _, filename in ipairs(love.filesystem.getDirectoryItems(mod.path .. 'Assets')) do
         local extension = string.sub(filename, -4)
-        if extension == '.ogg' or extension == '.mp3' then --please use .ogg files
+        if extension == '.ogg' or extension == '.mp3' or extension=='.wav' then --please avoid using .mp3 files
             local sound = nil
             local sound_code = string.sub(filename, 1, -5)
             --sendDebugMessage("path: " .. mod.path .. 'Assets/' .. filename)
