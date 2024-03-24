@@ -4,7 +4,7 @@ This is for Steamodded
 
 .mp3 can be used but it's not recommended please use .ogg or .wav
 
-#Add_Custom_Sound_Global(modID)
+# Add_Custom_Sound_Global(modID)
 You give this function your modID and it'll search and load every sound in the Assets folder next to your .lua file.
 The name of every sound file will be the sound_code (without the extension) so for example TEST.ogg its sound_code is TEST (it's case sensitive)
 
