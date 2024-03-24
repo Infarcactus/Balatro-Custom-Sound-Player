@@ -17,7 +17,7 @@ Arguments :
   - stop_previous_instace : set to true by default, if you wanna play a sound and it's already playing should we stop it to play the new one
   - volume : set to 1 by default
   - pitch : set to 1 by default
-  - 
+
 ## Add_Custom_Stop_Sound(sound_code)
 This functions directly interacts with the base game and stops the desired sound_code from the base game
 Arguments :
