@@ -14,7 +14,10 @@ function Add_Custom_Sound_Global(modID)
         if extension == '.ogg' or extension == '.mp3' or extension=='.wav' then --please use .ogg or .wav files
             local sound = nil
             local sound_code = string.sub(filename, 1, -5)
-            sound = {sound = love.audio.newSource(mod.path .. 'Assets/' .. filename, 'static')}
+            sound = {
+                sound = love.audio.newSource(mod.path .. 'assets/sounds/' .. filename,
+                ((string.find(sound_code, 'music') or string.find(sound_code, 'stream')) and "stream" or 'static'))
+            }
             sound.sound_code = sound_code
             Custom_Sounds[sound_code]=sound
         end
