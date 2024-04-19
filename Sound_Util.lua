@@ -5,6 +5,10 @@
 --- MOD_DESCRIPTION: Utility mod to facilitate adding sound
 ----------------------------------------------
 ------------MOD CODE -------------------------
+
+-- this is discontinued please use the other file or you won't have every options available and might have problem with Steamodded
+
+
 local Custom_Sounds = {}
 
 function Add_Custom_Sound_Global(modID)
