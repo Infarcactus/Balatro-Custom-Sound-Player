@@ -39,7 +39,7 @@ end
 
 function Custom_Play_Sound(sound_code, stop_previous_instance, volume, pitch)
     if SMODS.SOUND_SOURCES[sound_code] then
-        sendTraceMessage("found sound code: " .. sound_code, 'SoundAPI')
+        --sendTraceMessage("found sound code: " .. sound_code, 'SoundAPI')
         local s = SMODS.SOUND_SOURCES[sound_code]
         stop_previous_instance = (stop_previous_instance == nil) and true or stop_previous_instance
         volume = volume or 1
@@ -111,6 +111,8 @@ function play_sound(sound_code, per, vol)
     return Original_play_sound(sound_code, per, vol)
 end
 
+
+local Old_music_being_played = ''
 local Orginial_modulate_sound=modulate_sound
 function modulate_sound(dt)
     --Control the music here
@@ -123,9 +125,21 @@ function modulate_sound(dt)
           (G.shop and not G.shop.REMOVED and 'music4') or
           (G.GAME.blind and G.GAME.blind.boss and 'music5') or 
           ('music1')
+    
+    if not(Old_music_being_played==desired_track) then
+        if SMODS.REPLACE_SOUND_PLAYED[Old_music_being_played] then
+            local sound_args=SMODS.REPLACE_SOUND_PLAYED[Old_music_being_played]
+            if type(sound_args)=='table' then
+                SMODS.SOUND_SOURCES[sound_args.sound_code].sound:stop()
+            else
+                SMODS.SOUND_SOURCES[sound_args].sound:stop()
+            end
+        end
+        Old_music_being_played=desired_track
+    end
 
     if SMODS.REPLACE_SOUND_PLAYED[desired_track] then
-        if type(SMODS.REPLACE_SOUND_PLAYED[desired_track]) == "table" then
+        if type(SMODS.REPLACE_SOUND_PLAYED[desired_track]) == "table" then  
             local sound_args = SMODS.REPLACE_SOUND_PLAYED[desired_track]
             Custom_Play_Sound(sound_args.sound_code,sound_args.stop_previous_instance,sound_args.volume, sound_args.pitch)
             if not (sound_args.continue_base_sound) then return end
