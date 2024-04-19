@@ -14,7 +14,6 @@ function Add_Custom_Sound_Global(modID)
         if extension == '.ogg' or extension == '.mp3' or extension=='.wav' then --please use .ogg or .wav files
             local sound = nil
             local sound_code = string.sub(filename, 1, -5)
-            --sendDebugMessage("path: " .. mod.path .. 'Assets/' .. filename)
             sound = {sound = love.audio.newSource(mod.path .. 'Assets/' .. filename, 'static')}
             sound.sound_code = sound_code
             Custom_Sounds[sound_code]=sound
@@ -99,6 +98,35 @@ function play_sound(sound_code, per, vol)
     end
     sendDebugMessage("sound_code : " .. sound_code)
     return Original_play_sound(sound_code, per, vol)
+end
+
+local Orginial_modulate_sound=modulate_sound
+function modulate_sound(dt)
+    --Control the music here
+    local desired_track =  
+          G.video_soundtrack or
+          (G.STATE == G.STATES.SPLASH and '') or
+          (G.booster_pack_sparkles and not G.booster_pack_sparkles.REMOVED and 'music2') or
+          (G.booster_pack_meteors and not G.booster_pack_meteors.REMOVED and 'music3') or
+          (G.booster_pack and not G.booster_pack.REMOVED and 'music2') or
+          (G.shop and not G.shop.REMOVED and 'music4') or
+          (G.GAME.blind and G.GAME.blind.boss and 'music5') or 
+          ('music1')
+
+    if Custom_Replace_Sound[desired_track] then
+        if type(Custom_Replace_Sound[desired_track]) == "table" then
+            local sound_args = Custom_Replace_Sound[desired_track]
+            Custom_Play_Sound(sound_args.sound_code,sound_args.stop_previous_instance,sound_args.volume, sound_args.pitch)
+            if not (sound_args.continue_base_sound) then return end
+        else
+            Custom_Play_Sound(Custom_Replace_Sound[desired_track])
+            return
+        end
+    end
+    if Custom_Stop_Sound[desired_track] then 
+        return 
+    end
+    return Orginial_modulate_sound(dt)
 end
 
 ----------------------------------------------
