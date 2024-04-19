@@ -9,7 +9,7 @@ local Custom_Sounds = {}
 
 function Add_Custom_Sound_Global(modID)
     local mod = SMODS.findModByID(modID)
-    for _, filename in ipairs(love.filesystem.getDirectoryItems(mod.path .. 'Assets')) do
+    for _, filename in ipairs(love.filesystem.getDirectoryItems(mod.path .. 'assets/sounds')) do
         local extension = string.sub(filename, -4)
         if extension == '.ogg' or extension == '.mp3' or extension=='.wav' then --please use .ogg or .wav files
             local sound = nil
