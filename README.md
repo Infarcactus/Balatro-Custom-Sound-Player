@@ -6,7 +6,7 @@ This is for Steamodded
 
 ## FUNCTIONS
 
-## Add_Custom_Sound_Global(modID)
+## Add_Custom_Sound_Global(modID) / register_sound_global
 You give this function your modID and it'll search and load every sound in the `Assets` folder next to your .lua file.  
 The name of every sound file will be the sound_code (without the extension) so for example TEST.ogg its sound_code is TEST (it's case sensitive)  
 
@@ -18,12 +18,12 @@ Arguments :
   - volume : set to 1 by default
   - pitch : set to 1 by default
 
-## Add_Custom_Stop_Sound(sound_code)
+## Add_Custom_Stop_Sound(sound_code) / register_stop_sound
 This functions directly interacts with the base game and stops the desired sound_code from the base game  
 Arguments :
   - sound_code : the sound_code you wanna stop (it can be a single string or a table of strings)
 
-## Add_Custom_Replace_Sound(replace_code_table)
+## Add_Custom_Replace_Sound(replace_code_table) / register_replace_sound_played
 This function also directly interacts with the base game but instead of completely stopping the sound from the base game, it stops it and plays a desired one instead  
 replace_code_table:  
 Structure of replace_code_table:  
@@ -47,3 +47,6 @@ A full one will look like this :
 
 ## play_sound
 play_sound is from the base game, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
+
+## modulate_sound
+modulate_sound is from the base game it is what handles the music being played
