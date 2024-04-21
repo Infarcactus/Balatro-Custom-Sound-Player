@@ -11,7 +11,7 @@ You give this function your modID and it'll search and load every sound in the `
 The name of every sound file will be the sound_code (without the extension) so for example TEST.ogg its sound_code is TEST (it's case sensitive)  
 
 ### Custom_Play_Sound(sound_code,stop_previous_instance, volume, pitch)
-This is the main player of custom_sound everytime something plays a custom sound it foes here.  
+This is the main player of custom_sound everytime something plays a custom sound it calls this function.  
 Arguments :
   - sound_code : the sound_code from the sound file you wanna play
   - stop_previous_instace : set to true by default, if you wanna play a sound and it's already playing should we stop it to play the new one
@@ -49,4 +49,4 @@ A full one will look like this :
 play_sound is from the base game, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
 
 ## modulate_sound
-modulate_sound is from the base game it is what handles the music being played
+modulate_sound is from the base game it is what handles the music being played, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
