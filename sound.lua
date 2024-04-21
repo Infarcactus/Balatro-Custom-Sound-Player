@@ -113,31 +113,76 @@ end
 
 
 local Old_music_being_played = ''
+local Music_Sound_Codes = {'music1','music2','music3','music4','music5'}
 local Orginial_modulate_sound=modulate_sound
 function modulate_sound(dt)
-    --Control the music here
     local desired_track =  
-          G.video_soundtrack or
-          (G.STATE == G.STATES.SPLASH and '') or
-          (G.booster_pack_sparkles and not G.booster_pack_sparkles.REMOVED and 'music2') or
-          (G.booster_pack_meteors and not G.booster_pack_meteors.REMOVED and 'music3') or
-          (G.booster_pack and not G.booster_pack.REMOVED and 'music2') or
-          (G.shop and not G.shop.REMOVED and 'music4') or
-          (G.GAME.blind and G.GAME.blind.boss and 'music5') or 
-          ('music1')
+        G.video_soundtrack or
+        (G.STATE == G.STATES.SPLASH and '') or
+        (G.booster_pack_sparkles and not G.booster_pack_sparkles.REMOVED and 'music2') or
+        (G.booster_pack_meteors and not G.booster_pack_meteors.REMOVED and 'music3') or
+        (G.booster_pack and not G.booster_pack.REMOVED and 'music2') or
+        (G.shop and not G.shop.REMOVED and 'music4') or
+        (G.GAME.blind and G.GAME.blind.boss and 'music5') or 
+        ('music1')
     
-    if not(Old_music_being_played==desired_track) then
-        if SMODS.REPLACE_SOUND_PLAYED[Old_music_being_played] then
-            local sound_args=SMODS.REPLACE_SOUND_PLAYED[Old_music_being_played]
-            if type(sound_args)=='table' then
-                SMODS.SOUND_SOURCES[sound_args.sound_code].sound:stop()
+    --flame control
+    local AC = G.SETTINGS.ambient_control
+    G.ARGS.ambient_sounds = G.ARGS.ambient_sounds or {
+      ambientFire2 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.9*((G.ARGS.score_intensity.flames > 0.3) and 1 or G.ARGS.score_intensity.flames/0.3) end},
+      ambientFire1 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.8*((G.ARGS.score_intensity.flames > 0.3) and (G.ARGS.score_intensity.flames-0.3)/0.7 or 0) end},
+      ambientFire3 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.4*((G.ARGS.chip_flames and G.ARGS.chip_flames.change or 0) + (G.ARGS.mult_flames and G.ARGS.mult_flames.change or 0)) end},
+      ambientOrgan1 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.6*(G.SETTINGS.SOUND.music_volume + 100)/200*(G.ARGS.score_intensity.organ) end},
+    }
+    
+    for k, v in pairs(G.ARGS.ambient_sounds) do
+      AC[k] = AC[k] or {}
+      AC[k].per = (k == 'ambientOrgan1') and 0.7 or (k == 'ambientFire1' and 1.1) or (k == 'ambientFire2' and 1.05) or 1
+      AC[k].vol = (not G.video_organ and G.STATE == G.STATES.SPLASH) and 0 or AC[k].vol and v.volfunc(AC[k].vol) or 0
+    end
+    --flame control
+
+    -- it could be optimized
+    for _,sound_code in ipairs(Music_Sound_Codes) do
+        if not(sound_code==desired_track) then
+            if SMODS.REPLACE_SOUND_PLAYED[sound_code] then
+                if type(SMODS.REPLACE_SOUND_PLAYED[sound_code]) == "table" then  
+                    local sound_args = SMODS.REPLACE_SOUND_PLAYED[sound_code]
+                    Custom_Play_Sound(sound_args.sound_code,sound_args.stop_previous_instance,0, sound_args.pitch)
+                else
+                    Custom_Play_Sound(SMODS.REPLACE_SOUND_PLAYED[sound_code],true,0)
+                end
+            end
+        elseif SMODS.REPLACE_SOUND_PLAYED[desired_track] then
+            if type(SMODS.REPLACE_SOUND_PLAYED[desired_track]) == "table" then  
+                local sound_args = SMODS.REPLACE_SOUND_PLAYED[desired_track]
+                Custom_Play_Sound(sound_args.sound_code,sound_args.stop_previous_instance,sound_args.volume, sound_args.pitch)
             else
-                SMODS.SOUND_SOURCES[sound_args].sound:stop()
+                Custom_Play_Sound(SMODS.REPLACE_SOUND_PLAYED[desired_track])
             end
         end
-        Old_music_being_played=desired_track
     end
 
+    for _,sound_code in ipairs(Music_Sound_Codes) do
+        if not(sound_code==desired_track) then
+            if SMODS.REPLACE_SOUND_PLAYED[sound_code] then
+                local sound_args=SMODS.REPLACE_SOUND_PLAYED[sound_code]
+                if type(sound_args)=='table' then
+                    SMODS.SOUND_SOURCES[sound_args.sound_code].sound:setVolume(0)
+                else
+                    SMODS.SOUND_SOURCES[sound_code].sound:setVolume(0)
+                end
+            end
+        elseif SMODS.REPLACE_SOUND_PLAYED[sound_code] then
+            local sound_args=SMODS.REPLACE_SOUND_PLAYED[sound_code]
+            if type(sound_args)=='table' then
+                SMODS.SOUND_SOURCES[sound_args.sound_code].sound:setVolume(1)
+            else
+                SMODS.SOUND_SOURCES[sound_code].sound:setVolume(1)
+            end
+        end
+    end
+    -- end could be optimized
     if SMODS.REPLACE_SOUND_PLAYED[desired_track] then
         if type(SMODS.REPLACE_SOUND_PLAYED[desired_track]) == "table" then  
             local sound_args = SMODS.REPLACE_SOUND_PLAYED[desired_track]
