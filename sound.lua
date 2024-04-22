@@ -127,6 +127,18 @@ function modulate_sound(dt)
         ('music1')
     
     --flame control
+    G.SETTINGS.ambient_control = G.SETTINGS.ambient_control or {}
+    G.ARGS.score_intensity = G.ARGS.score_intensity or {}
+    if type(G.GAME.current_round.current_hand.chips) ~= 'number' or type(G.GAME.current_round.current_hand.mult) ~= 'number' then
+      G.ARGS.score_intensity.earned_score = 0
+    else
+      G.ARGS.score_intensity.earned_score = G.GAME.current_round.current_hand.chips*G.GAME.current_round.current_hand.mult
+    end
+    G.ARGS.score_intensity.required_score = G.GAME.blind and G.GAME.blind.chips or 0
+    G.ARGS.score_intensity.flames = math.min(1, (G.STAGE == G.STAGES.RUN and 1 or 0)*(
+      (G.ARGS.chip_flames and (G.ARGS.chip_flames.real_intensity + G.ARGS.chip_flames.change) or 0))/10)
+    G.ARGS.score_intensity.organ = G.video_organ or G.ARGS.score_intensity.required_score > 0 and math.max(math.min(0.4, 0.1*math.log(G.ARGS.score_intensity.earned_score/(G.ARGS.score_intensity.required_score+1), 5)),0.) or 0
+  
     local AC = G.SETTINGS.ambient_control
     G.ARGS.ambient_sounds = G.ARGS.ambient_sounds or {
       ambientFire2 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.9*((G.ARGS.score_intensity.flames > 0.3) and 1 or G.ARGS.score_intensity.flames/0.3) end},
@@ -134,7 +146,7 @@ function modulate_sound(dt)
       ambientFire3 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.4*((G.ARGS.chip_flames and G.ARGS.chip_flames.change or 0) + (G.ARGS.mult_flames and G.ARGS.mult_flames.change or 0)) end},
       ambientOrgan1 = {volfunc = function(_prev_volume) return _prev_volume*(1 - dt) + dt*0.6*(G.SETTINGS.SOUND.music_volume + 100)/200*(G.ARGS.score_intensity.organ) end},
     }
-    
+  
     for k, v in pairs(G.ARGS.ambient_sounds) do
       AC[k] = AC[k] or {}
       AC[k].per = (k == 'ambientOrgan1') and 0.7 or (k == 'ambientFire1' and 1.1) or (k == 'ambientFire2' and 1.05) or 1
