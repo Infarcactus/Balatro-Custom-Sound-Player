@@ -188,7 +188,7 @@ function modulate_sound(dt)
         elseif SMODS.REPLACE_SOUND_PLAYED[sound_code] then
             local sound_args=SMODS.REPLACE_SOUND_PLAYED[sound_code]
             if type(sound_args)=='table' then
-                SMODS.SOUND_SOURCES[sound_args.sound_code].sound:setVolume(1)
+                SMODS.SOUND_SOURCES[sound_args.sound_code].sound:setVolume(sound_args.volume * (G.SETTINGS.SOUND.volume / 100.0) * (G.SETTINGS.SOUND.music_volume / 100.0))
             else
                 SMODS.SOUND_SOURCES[sound_code].sound:setVolume(1)
             end
