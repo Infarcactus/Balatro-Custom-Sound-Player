@@ -7,7 +7,7 @@ This is for Steamodded
 ## FUNCTIONS
 
 ## Add_Custom_Sound_Global(modID) / register_sound_global
-You give this function your modID and it'll search and load every sound in the `Assets` folder next to your .lua file.  
+You give this function your modID and it'll search and load every sound in the `assets/sounds` folder next to your .lua file.  
 The name of every sound file will be the sound_code (without the extension) so for example TEST.ogg its sound_code is TEST (it's case sensitive)  
 
 ### Custom_Play_Sound(sound_code,stop_previous_instance, volume, pitch)
