@@ -23,6 +23,12 @@ This functions directly interacts with the base game and stops the desired sound
 Arguments :
   - sound_code : the sound_code you wanna stop (it can be a single string or a table of strings)
 
+## register_temporary_stop_sound(sound_code,number_repeat)
+Same as register_stop_sound but will only trigger the desired number of time
+Arguments :
+  - sound_code : the sound_code you wanna stop (it can be a single string or a table of strings)
+  - number_repeat : the number of time we should keep it to stop sounds
+
 ## Add_Custom_Replace_Sound(replace_code_table) / register_replace_sound_played
 This function also directly interacts with the base game but instead of completely stopping the sound from the base game, it stops it and plays a desired one instead  
 replace_code_table:  
@@ -44,6 +50,12 @@ A full one will look like this :
   }
 }
 ```
+
+## register_temporary_replace_sound_played(sound_code,number_repeat)
+Same as register_replace_sound_played but will only trigger the desired number of time
+Arguments :
+  - replace_code_table : same as register_replace_sound_played
+  - number_repeat : the number of time we should keep it to replace sounds
 
 ## play_sound
 play_sound is from the base game, it's modified non destructively to be able to do manipulation on it with Add_Custom_Stop_Sound or Add_Custom_Replace_Sound
