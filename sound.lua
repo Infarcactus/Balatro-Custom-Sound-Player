@@ -39,12 +39,12 @@ end
 
 function Custom_Play_Sound(sound_code, stop_previous_instance, volume, pitch)
     if SMODS.SOUND_SOURCES[sound_code] then
-        --sendTraceMessage("found sound code: " .. sound_code, 'SoundAPI')
+        --sendTraceMessage("found sound code: " .. sound_code, 'SoundAPI') --this had to be taken down due to the modulate_sound
         local s = SMODS.SOUND_SOURCES[sound_code]
-        stop_previous_instance = (stop_previous_instance == nil) and true or stop_previous_instance
+        stop_previous_instance = stop_previous_instance and true
         volume = volume or 1
         s.sound:setPitch(pitch or 1)
-        local sound_vol = volume * (G.SETTINGS.SOUND.volume / 100.0) * (G.SETTINGS.SOUND.game_sounds_volume / 100.0)
+        local sound_vol = volume * (G.SETTINGS.SOUND.volume / 100.0) * (G.SETTINGS.SOUND.music_volume / 100.0)
         if sound_vol <= 0 then
             s.sound:setVolume(0)
         else
@@ -78,6 +78,29 @@ function register_stop_sound(sound_code)
     return true
 end
 
+SMODS.TEMPORARY_STOP_SOUNDS = {}
+
+function register_temporary_stop_sound(sound_code,number_repeat)
+    if number_repeat and type(number_repeat) == "number" and number_repeat>0 then
+        if type(sound_code) == "table" then
+            for _, s_c in ipairs(sound_code) do
+                if type(s_c) == "string" then
+                    SMODS.TEMPORARY_STOP_SOUNDS[s_c] = number_repeat
+                else
+                    return false
+                end
+            end
+        elseif type(sound_code) == "string" then
+            SMODS.TEMPORARY_STOP_SOUNDS[sound_code] = number_repeat
+        else
+            return false
+        end
+    else
+        return false
+    end
+    return true
+end
+
 SMODS.REPLACE_SOUND_PLAYED = {}
 
 function register_replace_sound_played(replace_code_table)
@@ -95,8 +118,60 @@ function register_replace_sound_played(replace_code_table)
     return true
 end
 
+SMODS.TEMPORARY_REPLACE_SOUND_PLAYED = {}
+
+function register_temporary_replace_sound_played(replace_code_table,number_repeat)
+    if number_repeat and type(number_repeat) == "number" and number_repeat>0 then
+        if type(replace_code_table) == "table" then
+            for original_sound_code, replacement_sound_code in pairs(replace_code_table) do
+                if type(replacement_sound_code) == "table" or type(replacement_sound_code) == "string" then
+                    SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[original_sound_code] = {replacement_sound_code,number_repeat}
+                else
+                    return false
+                end
+            end
+        else
+            return false
+        end
+    else
+        return false
+    end
+    return true
+end
+
 local Original_play_sound = play_sound
 function play_sound(sound_code, per, vol)
+    if SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code] then
+        sendDebugMessage("Temporary replace sound played : " .. sound_code)
+        local table_args = SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code]
+        if type(table_args[1]) == "table" then
+            local sound_args = table_args[1]
+            Custom_Play_Sound(sound_args.sound_code,sound_args.stop_previous_instance,sound_args.volume, sound_args.pitch)
+            if table_args[2] -1 <= 0 then
+                SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code] = nil
+            else
+                SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code] = {table_args[1],table_args[2] -1}
+            end
+            if not (sound_args.continue_base_sound) then return end
+        else
+            Custom_Play_Sound(table_args[1])
+            if table_args[2] -1 <= 0 then
+                SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code] = nil
+            else
+                SMODS.TEMPORARY_REPLACE_SOUND_PLAYED[sound_code] = {table_args[1],table_args[2] -1}
+            end
+            return
+        end
+    end
+    if SMODS.TEMPORARY_STOP_SOUNDS[sound_code] then
+        sendDebugMessage("Temporary stop sound : " .. sound_code)
+        if SMODS.TEMPORARY_STOP_SOUNDS[sound_code] -1 <= 0 then
+            SMODS.TEMPORARY_STOP_SOUNDS[sound_code] = nil
+        else
+            SMODS.TEMPORARY_STOP_SOUNDS[sound_code] = SMODS.TEMPORARY_STOP_SOUNDS[sound_code] -1
+        end
+        return
+    end
     if SMODS.REPLACE_SOUND_PLAYED[sound_code] then
         if type(SMODS.REPLACE_SOUND_PLAYED[sound_code]) == "table" then
             local sound_args = SMODS.REPLACE_SOUND_PLAYED[sound_code]
@@ -110,7 +185,6 @@ function play_sound(sound_code, per, vol)
     if SMODS.STOP_SOUNDS[sound_code] then return end
     return Original_play_sound(sound_code, per, vol)
 end
-
 
 local Old_music_being_played = ''
 local Music_Sound_Codes = {'music1','music2','music3','music4','music5'}
