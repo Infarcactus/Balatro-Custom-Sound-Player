@@ -14,7 +14,7 @@ The name of every sound file will be the sound_code (without the extension) so f
 This is the main player of custom_sound everytime something plays a custom sound it calls this function.  
 Arguments :
   - sound_code : the sound_code from the sound file you wanna play
-  - stop_previous_instace : set to true by default, if you wanna play a sound and it's already playing should we stop it to play the new one
+  - stop_previous_instace : set to false by default, if you wanna play a sound and it's already playing should we stop it to play the new one ?
   - volume : set to 1 by default
   - pitch : set to 1 by default
 
