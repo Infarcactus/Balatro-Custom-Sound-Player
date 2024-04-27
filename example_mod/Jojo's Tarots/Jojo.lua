@@ -7,21 +7,19 @@
 ------------MOD CODE -------------------------
 
 function SMODS.INIT.jojo_tarot()
-    Add_Custom_Sound_Global("jojo_tarot")
+    register_sound_global("jojo_tarot")
     -- these were added but not used in my mod to explain other functions better (they work)
-    Add_Custom_Replace_Sound({button = "The World"})
-    Add_Custom_Replace_Sound({paper1 = {sound_code ="The World",volume = 0.01} })
-    Add_Custom_Replace_Sound({cardSlide1 = {sound_code ="Death",stop_previous_instance = true, volume = 1,pitch=1,continue_base_sound=true} })
-    Add_Custom_Stop_Sound({"whoosh","something"})
-    Add_Custom_Stop_Sound("whoosh1")
+    sendDebugMessage(" try " .. tostring((register_temporary_replace_sound_played({button = "The World"},5) )))
+    register_replace_sound_played({music1 = {sound_code ="The World",stop_previous_instance = false,volume = 0.1} })
+    register_replace_sound_played({music2 = {sound_code ="The World",stop_previous_instance = false,volume = 1} })
+    register_replace_sound_played({music3 = {sound_code ="The World",stop_previous_instance = false,volume = 1} })
+    register_replace_sound_played({music4 = {sound_code ="The World",stop_previous_instance = false,volume = 1} })
+    register_replace_sound_played({music5 = {sound_code ="The World",stop_previous_instance = false,volume = 1} })
+    register_replace_sound_played({cardSlide1 = {sound_code ="Death",stop_previous_instance = true, volume = 1,pitch=0.5,continue_base_sound=true} })
+    register_temporary_stop_sound({"whoosh","something"},10)
+    sendDebugMessage(" try " ..tostring((register_temporary_stop_sound("button",2) ) ) )
+    register_stop_sound("music1")
     -- end of added functions for explanation
-end
-
-local Orginial_Card_use_consumeable = Card.use_consumeable
-function Card:use_consumeable(area, copier)
-    Custom_Play_Sound(self.ability.name,false,1,1)
-    local temp_ret = Orginial_Card_use_consumeable(self, area, copier)
-    return temp_ret
 end
 ----------------------------------------------
 ------------MOD CODE END----------------------
