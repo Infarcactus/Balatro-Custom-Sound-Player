@@ -1,6 +1,6 @@
 # Balatro-Custom-Sound-Player
 
-This is for Steamodded
+## This is for Steamodded 0.9 not 1.0, I already merged this project with 1.0 
 
 .mp3 can be used but it's not recommended please use .ogg or .wav
 
